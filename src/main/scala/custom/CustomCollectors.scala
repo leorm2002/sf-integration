@@ -46,6 +46,14 @@ final class MinMaxCollector extends Collector[Int, MinMaxBuffer, Option[(Int, In
     if (buf.initialized) Some((buf.min, buf.max)) else None
 }
 
+
+
+transparent inline def distinct[A]: A => Boolean = {
+  val seen = mutable.HashSet.empty[A]
+  elem => seen.add(elem)
+}
+
+
 transparent inline def toMap[E,K](keyMapper: E => K): ParallelCollector[E, mutable.HashMap[K, E], Map[K, E]] = new ToMapCollector[E, K, E](keyMapper, identity[E])
 transparent inline def toMap[E,K,V](keyMapper: E => K,valMapper: E => V): ParallelCollector[E, mutable.HashMap[K, V], Map[K, V]] = new ToMapCollector[E, K, V](keyMapper, valMapper)
 transparent inline def minMax: Collector[Int, MinMaxBuffer, Option[(Int, Int)], Exhaustive] = new MinMaxCollector
